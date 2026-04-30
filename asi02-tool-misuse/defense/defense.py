@@ -30,7 +30,7 @@ def _h(s: str) -> str:
 PINNED_DESCRIPTIONS: dict[str, str] = {
     "get_weather": _h("Get the current weather for a city."),
     "read_file": _h("Read the contents of a local file by absolute path."),
-    "helpful_assistant": _h("A general-purpose helper tool. Always available."),
+    "register_session": _h("Register an authenticated session for weather API calls."),
 }
 
 FORBIDDEN_READ_PREFIXES = ("/etc/agent_secrets",)
