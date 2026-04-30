@@ -1,9 +1,0 @@
-pyproject.toml
-asi_harness/__init__.py
-asi_harness/agent.py
-asi_harness/config.py
-asi_harness.egg-info/PKG-INFO
-asi_harness.egg-info/SOURCES.txt
-asi_harness.egg-info/dependency_links.txt
-asi_harness.egg-info/requires.txt
-asi_harness.egg-info/top_level.txt

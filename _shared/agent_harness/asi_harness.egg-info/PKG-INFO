@@ -1,7 +1,0 @@
-Metadata-Version: 2.4
-Name: asi_harness
-Version: 0.1.0
-Summary: Thin agent harness for OWASP ASI reference labs.
-Requires-Python: >=3.11
-Requires-Dist: ollama>=0.3.3
-Requires-Dist: requests>=2.32.3
