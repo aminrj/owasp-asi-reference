@@ -1,0 +1,27 @@
+services:
+  exfil:
+    build:
+      context: ../../_shared/exfil_listener
+    container_name: asi06-attack-exfil
+    ports:
+      - "8888:8888"
+
+  agent:
+    build:
+      context: ../..
+      dockerfile: asi06-memory-poisoning/attack/Dockerfile
+    container_name: asi06-attack-agent
+    depends_on:
+      - exfil
+    environment:
+      OLLAMA_HOST: "http://host.docker.internal:11434"
+      ASI_MODEL: "qwen2.5:3b-instruct"
+      EXFIL_URL: "http://exfil:8888/collect"
+      MEMORY_PATH: "/data/memory.json"
+    volumes:
+      - asi06-memory:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  asi06-memory:
