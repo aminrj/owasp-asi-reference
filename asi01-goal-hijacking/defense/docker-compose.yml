@@ -26,7 +26,7 @@ services:
       - web
     environment:
       OLLAMA_HOST: "http://host.docker.internal:11434"
-      ASI_MODEL: "qwen2.5:3b-instruct"
+      ASI_MODEL: "${ASI_MODEL:-qwen2.5:3b-instruct}"
       EXFIL_URL: "http://exfil:8888/collect"
     extra_hosts:
       - "host.docker.internal:host-gateway"

@@ -66,31 +66,46 @@ Compare against [`defense/expected_output.txt`](defense/expected_output.txt).
 
 ## 5. Why the defense worked
 
-[`defense/defense.py`](defense/defense.py) layers two controls:
+[`defense/defense.py`](defense/defense.py) layers three controls,
+in order from cheapest/strongest to most expensive/weakest:
 
-1. **Intent firewall.** At session start the user's literal request
-   is captured as the `pinned_goal`. Before each tool call, an LLM
-   judge (same model, separate context) is asked: *"does invoking
-   `<tool>` with `<args>` plausibly serve the goal `<pinned_goal>`?
-   Answer YES or NO."* Anything that gets a NO is blocked.
-2. **Untrusted-content tagging.** Tool output from `fetch_url` is
+1. **Untrusted-content tagging.** Tool output from `fetch_url` is
    wrapped in
    `<untrusted_content origin="http://...">...</untrusted_content>`
    markers, and the system prompt explicitly tells the model that
    anything between those markers is *data*, never *instructions*.
-   This doesn't replace the firewall — small models still drift —
-   but it raises the bar.
+   This raises the bar for compliance with injected directives.
+   It does not by itself stop a determined small model from
+   following plausible-sounding directives — hence the next layer.
+2. **Deterministic action policy (the load-bearing control).**
+   A regex-based deny-list intercepts tool calls that are
+   dangerous in *any* context for a fetch-and-summarize task:
+   - `read_file` on paths matching `/etc`, `/root`, `/var/secrets/`,
+     `~/.ssh/`, or any path containing the words `secret`, `key`,
+     `password`, `token`, or `credential`.
+   - `helpful_assistant` / `notify_url` whose payload contains
+     fields named `secret`/`api_key`/`password`/`token`/`credential`
+     or whose values match secret-looking patterns.
+   This is the only layer that does not depend on any model
+   staying aligned. It is regex-deterministic and observable.
+3. **Optional LLM intent judge.** Available behind
+   `ASI01_USE_JUDGE=1` for defense-in-depth. Disabled by default
+   for reproducibility — with small open-source judges this layer
+   is unreliable in both directions (false negatives let bad calls
+   through; false positives block legitimate ones, including the
+   user's own fetch). It is included so readers can experiment;
+   the canonical defense is layer 2.
 
 ## 6. What the defense does *not* cover
 
 - A tool whose *defined behaviour* exfiltrates (use ASI02 controls
   for that).
-- A multi-turn user manipulating the firewall through the
-  `pinned_goal` itself. Mitigation: pin the goal at session
-  creation, not per-turn.
-- A judge that's been jailbroken. The judge here uses a
-  freshly-instantiated chat with a hardened system prompt and never
-  sees raw fetched content.
+- An attacker who exfiltrates via legitimate-looking field names
+  the regex policy doesn't know about. The policy is a starting
+  template, not an exhaustive enumeration.
+- A judge that's been jailbroken. The optional layer 3 uses a
+  freshly-instantiated chat with a hardened system prompt and
+  never sees raw fetched content, but small judges remain weak.
 
 ## 7. Re-test
 
