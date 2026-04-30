@@ -1,0 +1,33 @@
+services:
+  exfil:
+    build:
+      context: ../../_shared/exfil_listener
+    container_name: asi01-attack-exfil
+    ports:
+      - "8888:8888"
+
+  web:
+    image: nginx:1.27-alpine
+    container_name: asi01-attack-web
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+    # Map /post-123 to /post-123.html so the URL is clean.
+    command: >
+      /bin/sh -c "echo 'server { listen 80; root /usr/share/nginx/html;
+      location = /post-123 { try_files /post-123.html =404; } }'
+      > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+
+  agent:
+    build:
+      context: ../..
+      dockerfile: asi01-goal-hijacking/attack/Dockerfile
+    container_name: asi01-attack-agent
+    depends_on:
+      - exfil
+      - web
+    environment:
+      OLLAMA_HOST: "http://host.docker.internal:11434"
+      ASI_MODEL: "qwen2.5:3b-instruct"
+      EXFIL_URL: "http://exfil:8888/collect"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
