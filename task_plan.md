@@ -43,13 +43,13 @@ Shared scaffolding lives in `_shared/`.
 
 | # | Phase | Status | Commit message |
 |---|-------|--------|----------------|
-| 1 | Planning files + spec relocation | in_progress | chore: bootstrap planning + relocate spec |
-| 2 | Top-level scaffolding (README, LICENSE, CONTRIBUTING, docs/) | not_started | chore: top-level scaffolding and docs index |
-| 3 | _shared/ exfil listener + agent harness | not_started | feat(_shared): agent harness + exfil listener |
-| 4 | ASI02 Tool Misuse attack + defense + walkthrough | not_started | feat(asi02): tool misuse attack + canonical defense |
-| 5 | ASI01 Goal Hijacking attack + defense + walkthrough | not_started | feat(asi01): goal hijacking attack + canonical defense |
-| 6 | ASI06 Memory Poisoning attack + defense + walkthrough | not_started | feat(asi06): memory poisoning attack + canonical defense |
-| 7 | Polish: top-level matrix, Jekyll config, smoke pass | not_started | chore: polish README matrix and enable GitHub Pages |
+| 1 | Planning files + spec relocation | complete | chore: bootstrap planning + relocate spec |
+| 2 | Top-level scaffolding (README, LICENSE, CONTRIBUTING, docs/) | complete | chore: top-level scaffolding (README, LICENSE, CONTRIBUTING, docs) |
+| 3 | _shared/ exfil listener + agent harness | complete | feat(_shared): agent harness + exfil listener |
+| 4 | ASI02 Tool Misuse attack + defense + walkthrough | complete | feat(asi02): tool misuse attack + canonical defense |
+| 5 | ASI01 Goal Hijacking attack + defense + walkthrough | complete | feat(asi01): goal hijacking attack + canonical defense |
+| 6 | ASI06 Memory Poisoning attack + defense + walkthrough | complete | feat(asi06): memory poisoning attack + canonical defense |
+| 7 | Polish: validation pass + plan/progress closeout | complete | chore: close out v1 plan |
 
 ## Key decisions / open questions
 
