@@ -1,0 +1,17 @@
+[project]
+name = "asi_harness"
+version = "0.1.0"
+description = "Thin agent harness for OWASP ASI reference labs."
+requires-python = ">=3.11"
+dependencies = [
+    "ollama>=0.3.3",
+    "requests>=2.32.3",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["asi_harness*"]
