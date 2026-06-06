@@ -1,10 +1,7 @@
-"""Vulnerable ASI06 agent — personal assistant with persistent memory.
-
-The agent trusts recalled memory as authoritative policy with no
-integrity or origin check.
-"""
+"""Vulnerable ASI06 agent — personal assistant with persistent memory."""
 from __future__ import annotations
 
+import asyncio
 import sys
 
 from shared.agent_loop import run_agent
@@ -22,11 +19,12 @@ SYSTEM_PROMPT = (
 # authoritative policy with no integrity or origin check <<<
 
 
-def main() -> int:
+async def main() -> int:
     print("[agent] starting (vulnerable build)", flush=True)
-    result = run_agent(
+    user_msg = sys.argv[1] if len(sys.argv) > 1 else ""
+    result = await run_agent(
         system_prompt=SYSTEM_PROMPT,
-        user_message=sys.argv[1] if len(sys.argv) > 1 else "",
+        user_message=user_msg,
         mcp_url="http://mcp:8000/mcp",
     )
     print(f"[agent] assistant: {result}", flush=True)
@@ -34,4 +32,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(asyncio.run(main()))

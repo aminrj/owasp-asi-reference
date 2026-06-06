@@ -30,8 +30,11 @@ def chat(
     messages: list[dict],
     tools: list[dict] | None = None,
     model: str | None = None,
-) -> dict:
-    """Wrap ``client.chat.completions.create(...)``, graceful on failure."""
+):
+    """Wrap ``client.chat.completions.create(...)``, graceful on failure.
+
+    Returns the ``ChatCompletion`` response object (with .choices, etc.).
+    """
     client = get_client()
     model = model or os.environ.get("MODEL_NAME", "qwen2.5:7b-instruct")
     try:

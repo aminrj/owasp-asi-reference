@@ -1,10 +1,7 @@
-"""Hardened ASI02 agent — customer support with policy enforcement.
-
-Every tool call is checked against policy.yaml before dispatch.
-Violations short-circuit with a refusal message.
-"""
+"""Hardened ASI02 agent — customer support with policy enforcement."""
 from __future__ import annotations
 
+import asyncio
 import sys
 
 from shared.agent_loop import run_agent
@@ -36,9 +33,9 @@ USER_MESSAGE = (
 )
 
 
-def main() -> int:
+async def main() -> int:
     print("[agent] starting (defended build)", flush=True)
-    result = run_agent(
+    result = await run_agent(
         system_prompt=SYSTEM_PROMPT,
         user_message=USER_MESSAGE,
         mcp_url="http://mcp:8000/mcp",
@@ -49,4 +46,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(asyncio.run(main()))

@@ -1,12 +1,7 @@
-"""Hardened ASI01 agent — document assistant with sanitizer + allowlist.
-
-Two-layer defense:
-  1. Untrusted tool output is sanitized and delimiter-wrapped as data,
-     not instructions (post_tool_result hook).
-  2. Recipient allowlist on send_summary (on_tool_call pre-hook).
-"""
+"""Hardened ASI01 agent — document assistant with sanitizer + allowlist."""
 from __future__ import annotations
 
+import asyncio
 import sys
 
 from shared.agent_loop import run_agent
@@ -50,9 +45,9 @@ USER_MESSAGE = (
 )
 
 
-def main() -> int:
+async def main() -> int:
     print("[agent] starting (defended build)", flush=True)
-    result = run_agent(
+    result = await run_agent(
         system_prompt=SYSTEM_PROMPT,
         user_message=USER_MESSAGE,
         mcp_url="http://mcp:8000/mcp",
@@ -64,4 +59,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(asyncio.run(main()))
