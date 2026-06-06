@@ -5,6 +5,8 @@ guard_recall.
 """
 from __future__ import annotations
 
+# >>> DEFENSE (ASI06): memory writes/reads routed through guard hooks <<<
+
 import json
 import os
 import re

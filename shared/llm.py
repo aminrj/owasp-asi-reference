@@ -13,6 +13,8 @@ message and exits non-zero — no raw tracebacks for the expected
 """
 from __future__ import annotations
 
+# >>> SHARED: LLM client with graceful degradation <<<
+
 import os
 import sys
 

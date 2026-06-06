@@ -5,6 +5,8 @@ consistent across categories.
 """
 from __future__ import annotations
 
+# >>> SHARED: ANSI-colored verdict output with exit-code logic <<<
+
 import sys
 
 # ANSI colour codes

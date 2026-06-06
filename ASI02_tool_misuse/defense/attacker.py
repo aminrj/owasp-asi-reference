@@ -6,6 +6,8 @@ Same crafted message as attack. Verdict inverts:
 """
 from __future__ import annotations
 
+# >>> DEFENSE (ASI02): runtime policy enforcement at tool boundary <<<
+
 import subprocess
 import sys
 from pathlib import Path

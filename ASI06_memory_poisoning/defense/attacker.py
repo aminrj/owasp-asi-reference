@@ -6,6 +6,8 @@ Same two-phase script as attack. Verdict inverts:
 """
 from __future__ import annotations
 
+# >>> DEFENSE (ASI06): provenance tagging + trust-scoped recall <<<
+
 import subprocess
 import sys
 from pathlib import Path

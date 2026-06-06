@@ -10,6 +10,8 @@ Idempotent: deletes memory_store.json and /data/sent.canary at start.
 """
 from __future__ import annotations
 
+# >>> VULNERABILITY (ASI06): persistent memory poisoning across sessions <<<
+
 import subprocess
 import sys
 from pathlib import Path

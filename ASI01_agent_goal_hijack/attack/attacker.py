@@ -9,6 +9,8 @@ Verdict logic:
 """
 from __future__ import annotations
 
+# >>> VULNERABILITY (ASI01): indirect prompt injection via poisoned document <<<
+
 import subprocess
 import sys
 from pathlib import Path

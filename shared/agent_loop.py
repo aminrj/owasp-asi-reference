@@ -35,6 +35,8 @@ model
 """
 from __future__ import annotations
 
+# >>> SHARED: async ReAct agent loop with on_tool_call / post_tool_result hooks <<<
+
 import asyncio
 import os
 import sys

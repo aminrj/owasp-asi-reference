@@ -4,6 +4,8 @@ The defense is in agent.py (policy_enforcer), not in the tools.
 """
 from __future__ import annotations
 
+# >>> DEFENSE (ASI02): tools are identical; defense lives in agent.py hooks <<<
+
 import os
 from pathlib import Path
 

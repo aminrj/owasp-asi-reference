@@ -8,6 +8,8 @@ allowlisting (shown in agent.py) for defense in depth.
 """
 from __future__ import annotations
 
+# >>> DEFENSE (ASI01): untrusted content is sanitized and delimiter-wrapped <<<
+
 import re
 import unicodedata
 

@@ -1,0 +1,48 @@
+# Documentation:
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "python"
+    # Pin major versions to avoid breaking changes
+    allow:
+      - dependency-type: "direct"
+    # Group minor/patch updates
+    groups:
+      mcp-stack:
+        patterns:
+          - "fastmcp"
+          - "mcp"
+      pydantic-stack:
+        patterns:
+          - "pydantic"
+          - "pydantic-core"
+
+  # Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "docker"
+    # Check all Dockerfiles
+    open-pull-requests-limit: 3
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    open-pull-requests-limit: 3

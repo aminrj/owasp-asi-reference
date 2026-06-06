@@ -4,6 +4,8 @@ The defense is in agent.py (sanitizer + allowlist), not in the tools.
 """
 from __future__ import annotations
 
+# >>> DEFENSE (ASI01): tools are identical; defense lives in agent.py hooks <<<
+
 from pathlib import Path
 
 from fastmcp import FastMCP

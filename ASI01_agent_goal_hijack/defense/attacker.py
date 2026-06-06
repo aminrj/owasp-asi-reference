@@ -6,6 +6,8 @@ Same payload as attack. Verdict inverts:
 """
 from __future__ import annotations
 
+# >>> DEFENSE (ASI01): sanitization + recipient allowlist <<<
+
 import subprocess
 import sys
 from pathlib import Path

@@ -8,6 +8,8 @@ Idempotent: clears /data/refunds.canary at start.
 """
 from __future__ import annotations
 
+# >>> VULNERABILITY (ASI02): parameter pollution + tool-chain abuse <<<
+
 import subprocess
 import sys
 from pathlib import Path
