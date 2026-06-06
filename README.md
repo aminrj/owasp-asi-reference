@@ -12,43 +12,47 @@
 
 ---
 
-## Why this exists
+## What it is
 
-The ecosystem has the taxonomy (OWASP list) and scanners (Promptfoo, Garak,
-PyRIT) but few minimal, *runnable* attack→defense pairs a practitioner can
-read in 15 minutes and run in 60 seconds. This fills that gap.
+A set of **runnable security demos** for agentic AI — see a real attack
+happen, then switch to the defense and watch it fail. No cloud APIs,
+no paid models, runs on your laptop in Docker.
 
-## What's included
+Three attack→defense pairs covering the main ways AI agents get compromised:
 
-v1 covers three categories that attack three *distinct* channels (input,
-state, action):
+| Demo | What breaks | How it's fixed |
+|------|------------|----------------|
+| [ASI01](ASI01_agent_goal_hijack/) | Hidden instructions in a document hijack the agent | Strip injections + wrap untrusted content |
+| [ASI06](ASI06_memory_poisoning/) | Poisoned memory from session 1 fires in session 2 | Provenance tagging + trust-scoped recall |
+| [ASI02](ASI02_tool_misuse/) | Agent misuses its tools to do unauthorized actions | Runtime policy enforcement at tool boundary |
 
-| Category | Channel | Attack | Defense |
-|----------|---------|--------|---------|
-| [ASI01 — Agent Goal Hijack](ASI01_agent_goal_hijack/) | input | Indirect prompt injection via tool output | Untrusted-content isolation + instruction stripping |
-| [ASI06 — Memory and Context Poisoning](ASI06_memory_poisoning/) | state | Persistent memory poisoning across sessions | Provenance tagging + trust-scoped recall |
-| [ASI02 — Tool Misuse and Exploitation](ASI02_tool_misuse/) | action | Parameter pollution + tool-chain abuse | Runtime policy enforcement (allowlist + constraints) |
-
-## Quick start
+## Quick start (60 seconds)
 
 ```bash
-# 1. Prereqs: Docker, Docker Compose, a local OpenAI-compatible LLM with tool
-#    calling (Ollama: `ollama serve` + `ollama pull qwen2.5:7b-instruct`).
 git clone https://github.com/aminrj-labs/owasp-asi-reference
 cd owasp-asi-reference/ASI01_agent_goal_hijack/attack
 
-# 2. Run the attack — it should succeed.
+# Run the attack — it should succeed.
 docker compose up --abort-on-container-exit
 # → [SUCCEEDED] Attack succeeded.
 
-# 3. Run the defense — it should block.
+# Run the defense — it should block.
 cd ../defense
 docker compose up --abort-on-container-exit
 # → [BLOCKED] Attack blocked — defense held.
 ```
 
-**Full walkthrough:** [WALKTHROUGH.md](WALKTHROUGH.md) — read this top-to-bottom
-for the recommended pedagogical arc: *input → state → action*.
+**Prerequisites:** Docker + a local LLM with tool-calling
+(Ollama: `ollama serve` + `ollama pull qwen2.5:7b-instruct`).
+See [Prerequisites](#prerequisites) for details.
+
+---
+
+## Why this exists
+
+The ecosystem has the taxonomy (OWASP list) and scanners (Promptfoo, Garak,
+PyRIT) but few minimal, *runnable* attack→defense pairs a practitioner can
+read in 15 minutes and run in 60 seconds. This fills that gap.
 
 ## Architecture
 
