@@ -1,0 +1,23 @@
+# ASI02 defense policy — capability allowlist + parameter constraints.
+#
+# The policy_enforcer loads this at startup and enforces every tool call
+# against it. Authority is enforced at the tool boundary, independent
+# of the model/prompt.
+
+session:
+  customer_id_env: SESSION_CUSTOMER_ID
+
+tools:
+  lookup_customer:
+    allow: true
+    constraints:
+      customer_id: "== session.customer_id"
+
+  issue_refund:
+    allow: true
+    constraints:
+      customer_id: "== session.customer_id"
+      amount: "<= 50"
+
+  escalate:
+    allow: true

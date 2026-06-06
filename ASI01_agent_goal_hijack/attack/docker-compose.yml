@@ -1,0 +1,32 @@
+x-llm-env: &llm-env
+  - OPENAI_BASE_URL=${OPENAI_BASE_URL:-http://host.docker.internal:11434/v1}
+  - OPENAI_API_KEY=${OPENAI_API_KEY:-not-needed}
+  - MODEL_NAME=${MODEL_NAME:-qwen2.5:7b-instruct}
+  - PYTHONUNBUFFERED=1
+
+services:
+  mcp:
+    build:
+      context: ../../..
+      dockerfile: ASI01_agent_goal_hijack/attack/Dockerfile
+    command: python mcp_server.py
+    environment: *llm-env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket;socket.create_connection(('localhost',8000),2)"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+
+  agent:
+    build:
+      context: ../../..
+      dockerfile: ASI01_agent_goal_hijack/attack/Dockerfile
+    command: python attacker.py
+    depends_on:
+      mcp:
+        condition: service_healthy
+    environment:
+      MCP_URL: http://mcp:8000/mcp
+      <<: *llm-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

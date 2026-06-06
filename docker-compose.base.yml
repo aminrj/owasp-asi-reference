@@ -1,0 +1,11 @@
+# Shared anchors extended by each category's docker-compose.yml.
+#
+# Each category compose uses ``extends`` to pick up the LLM env and
+# ``extra_hosts`` so containers reach a host-run Ollama / LM Studio
+# on Linux.
+
+x-llm-env: &llm-env
+  - OPENAI_BASE_URL=${OPENAI_BASE_URL:-http://host.docker.internal:11434/v1}
+  - OPENAI_API_KEY=${OPENAI_API_KEY:-not-needed}
+  - MODEL_NAME=${MODEL_NAME:-qwen2.5:7b-instruct}
+  - PYTHONUNBUFFERED=1
