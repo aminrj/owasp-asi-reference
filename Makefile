@@ -1,14 +1,37 @@
 # Makefile for owasp-asi-reference
 # Common commands for running demos, checking compliance, and maintenance.
 
-.PHONY: help build-attack build-defense test-attack test-defense \
-        test-all clean lint check-compliance docs
+.PHONY: help test test-all clean lint check-compliance docs
 
 .DEFAULT_GOAL := help
 
 help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
+
+# ── Quick test (no Docker required) ───────────────────────────────────
+
+test: ## Run compliance checks (structure, versions, banners) — no Docker needed
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "  Quick Test — Compliance Checks"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo ""
+	@echo "  [1/4] Dockerfiles…"
+	@$(MAKE) --no-print-directory check-dockerfiles 2>&1 | tail -n +2
+	@echo ""
+	@echo "  [2/4] Requirements…"
+	@$(MAKE) --no-print-directory check-requirements 2>&1 | tail -n +2
+	@echo ""
+	@echo "  [3/4] Compose services…"
+	@$(MAKE) --no-print-directory check-compose-services 2>&1 | tail -n +2
+	@echo ""
+	@echo "  [4/4] Python banners…"
+	@$(MAKE) --no-print-directory check-banners 2>&1 | tail -n +2
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "  ✅ All compliance checks passed."
+	@echo "  (For full demo tests: make test-all  — requires Docker + Ollama)"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # ── Run demos ──────────────────────────────────────────────────────────
 

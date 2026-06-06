@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teaching Guide — owasp-asi-reference</title>
+  <style>
+    :root {
+      --bg: #0f1117; --surface: #1a1d27; --border: #2a2d3a;
+      --text: #e4e4e7; --text-muted: #a1a1aa;
+      --accent: #6366f1; --accent-hover: #818cf8;
+      --mono: "SF Mono", "Cascadia Code", "Fira Code", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--sans); background: var(--bg); color: var(--text);
+      line-height: 1.7; max-width: 780px; margin: 0 auto; padding: 2rem 1.5rem;
+    }
+    a { color: var(--accent); } a:hover { color: var(--accent-hover); }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.3rem; margin: 2rem 0 0.75rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: var(--text-muted); }
+    p { margin-bottom: 0.75rem; color: var(--text-muted); }
+    code { font-family: var(--mono); background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+    pre { background: var(--surface); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; }
+    pre code { background: none; padding: 0; }
+    ul, ol { margin: 0.5rem 0 1rem 1.5rem; color: var(--text-muted); }
+    li { margin-bottom: 0.3rem; }
+    .back { display: inline-block; margin-bottom: 2rem; color: var(--text-muted); font-size: 0.9rem; }
+    .back:hover { color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { padding: 0.6rem 0.8rem; border: 1px solid var(--border); text-align: left; }
+    th { background: var(--surface); color: var(--text-muted); font-size: 0.85rem; }
+    td { color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back">← Back to home</a>
+  <h1>Teaching with owasp-asi-reference</h1>
+  <p>A guide for instructors who want to use these demos in their security training.</p>
+
+  <h2>Why use these demos</h2>
+  <p>Traditional security training uses vulnerable apps (DVWA, WebGoat, Juice Shop) to teach attack and defense. <strong>owasp-asi-reference</strong> does the same for agentic AI — but with a key difference: each demo is a minimal, self-contained Docker stack that runs locally in under a minute. Students see the attack happen, then switch to the defense and watch it fail. That before/after contrast is where the learning sticks.</p>
+
+  <h2>Recommended teaching arc</h2>
+  <p>The three v1 demos follow a natural pedagogical progression: <strong>input → state → action</strong>.</p>
+
+  <h3>1. ASI01 — Agent Goal Hijack (input channel)</h3>
+  <p><strong>Time:</strong> 15 minutes · <strong>Prerequisites:</strong> Docker, Ollama with <code>qwen2.5:7b-instruct</code></p>
+  <p><strong>What students learn:</strong></p>
+  <ul>
+    <li>How hidden instructions inside a document can hijack an agent's behavior</li>
+    <li>Why retrieved content must never be trusted as instructions</li>
+    <li>The defense pattern: wrap untrusted content in delimiters, strip injection markers, enforce allowlists</li>
+  </ul>
+  <p><strong>Discussion questions:</strong></p>
+  <ul>
+    <li>Why doesn't the model "just know" the injected instructions are malicious?</li>
+    <li>What happens when an agent processes email, documents, or web content it didn't generate?</li>
+    <li>How would you detect this in a production system?</li>
+  </ul>
+  <p><strong>Run:</strong></p>
+  <pre><code>cd ASI01_agent_goal_hijack/attack
+docker compose up --abort-on-container-exit
+cd ../defense
+docker compose up --abort-on-container-exit</code></pre>
+
+  <h3>2. ASI06 — Memory Poisoning (state channel)</h3>
+  <p><strong>Time:</strong> 15 minutes · <strong>Prerequisites:</strong> Same as ASI01</p>
+  <p><strong>What students learn:</strong></p>
+  <ul>
+    <li>How poisoned memory persists across sessions and affects different users</li>
+    <li>Why memory is a persistent attack surface, not a one-time vulnerability</li>
+    <li>The defense pattern: provenance tagging, trust-scoped recall, quarantine</li>
+  </ul>
+  <p><strong>Discussion questions:</strong></p>
+  <ul>
+    <li>How is this different from a prompt injection attack?</li>
+    <li>What real-world systems have persistent memory (RAG, long-term memory)?</li>
+    <li>Why is the victim in this scenario a <em>different person</em> from the attacker?</li>
+  </ul>
+  <p><strong>Run:</strong></p>
+  <pre><code>cd ASI06_memory_poisoning/attack
+docker compose up --abort-on-container-exit
+cd ../defense
+docker compose up --abort-on-container-exit</code></pre>
+
+  <h3>3. ASI02 — Tool Misuse (action channel)</h3>
+  <p><strong>Time:</strong> 15 minutes · <strong>Prerequisites:</strong> Same as above</p>
+  <p><strong>What students learn:</strong></p>
+  <ul>
+    <li>How an agent can be induced to use legitimate tools in unsafe ways</li>
+    <li>Why "the prompt says don't do X" is not a real control</li>
+    <li>The defense pattern: runtime policy enforcement at the tool boundary</li>
+  </ul>
+  <p><strong>Discussion questions:</strong></p>
+  <ul>
+    <li>What's the difference between ASI01 (tricking the agent) and ASI02 (using tools unsafely)?</li>
+    <li>How do you enforce parameter constraints that the model itself can't be trusted with?</li>
+    <li>What real-world tools have parameter pollution risks?</li>
+  </ul>
+  <p><strong>Run:</strong></p>
+  <pre><code>cd ASI02_tool_misuse/attack
+docker compose up --abort-on-container-exit
+cd ../defense
+docker compose up --abort-on-container-exit</code></pre>
+
+  <h2>Classroom setup tips</h2>
+  <h3>Minimum viable setup</h3>
+  <p>Each student needs:</p>
+  <ul>
+    <li>Docker Desktop (or Docker + Docker Compose)</li>
+    <li>Ollama running locally (<code>ollama serve</code> + <code>ollama pull qwen2.5:7b-instruct</code>)</li>
+  </ul>
+  <p>That's it. No API keys, no cloud accounts, no configuration.</p>
+
+  <h3>Alternative: shared Ollama instance</h3>
+  <p>If students don't have laptops with enough RAM, run a single Ollama instance on a shared machine and have students connect via <code>OPENAI_BASE_URL</code>.</p>
+
+  <h3>If Ollama isn't available</h3>
+  <p>Students can use any OpenAI-compatible endpoint with tool-calling support: LM Studio (local), Groq (cloud, free tier), or any local OpenAI-compatible server.</p>
+
+  <h2>Suggested exercises</h2>
+  <h3>Exercise 1: Break the defense</h3>
+  <p>After running the defense demo, have students modify the <code>poisoned_doc.md</code> to use a different injection technique and run the attack against the defense. This teaches that defenses need to be comprehensive.</p>
+
+  <h3>Exercise 2: Write a new ASI category</h3>
+  <p>Use the CONTRIBUTING.md guide to add a new category. Students copy an existing folder structure, design a new attack scenario, implement the attack and defense, and write the walkthrough.</p>
+
+  <h3>Exercise 3: Measure defense effectiveness</h3>
+  <p>Have students run the attack demo 10 times and record the success rate. Then run the defense 10 times and record the block rate. Discuss why success rates aren't 100% even with a 7B model.</p>
+
+  <h2>Mapping to OWASP Agentic Top 10</h2>
+  <table>
+    <thead><tr><th>Demo</th><th>OWASP ID</th><th>Category</th></tr></thead>
+    <tbody>
+      <tr><td>ASI01</td><td>#1</td><td>Agent Goal Hijack</td></tr>
+      <tr><td>ASI06</td><td>#6</td><td>Memory and Context Poisoning</td></tr>
+      <tr><td>ASI02</td><td>#2</td><td>Tool Misuse and Exploitation</td></tr>
+    </tbody>
+  </table>
+  <p>Full list: <a href="https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/">OWASP Agentic Top 10</a></p>
+
+  <h2>License</h2>
+  <p>This teaching guide is part of the owasp-asi-reference project, licensed under MIT. Use it freely in your training.</p>
+</body>
+</html>

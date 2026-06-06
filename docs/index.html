@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OWASP ASI Reference — The WebGoat for Agentic AI Security</title>
+  <meta name="description" content="Runnable attack→defense demos for the OWASP Top 10 for Agentic Applications. Run in Docker on your laptop. No cloud APIs.">
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3a;
+      --text: #e4e4e7;
+      --text-muted: #a1a1aa;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --green: #22c55e;
+      --red: #ef4444;
+      --orange: #f59e0b;
+      --radius: 8px;
+      --mono: "SF Mono", "Cascadia Code", "Fira Code", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+    header h1 span { color: var(--accent); }
+    header p { color: var(--text-muted); font-size: 1.1rem; }
+    .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Quick start */
+    .quickstart {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .quickstart h2 { font-size: 1.25rem; margin-bottom: 1rem; }
+    .quickstart code {
+      font-family: var(--mono);
+      background: var(--bg);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    .quickstart pre {
+      background: var(--bg);
+      padding: 1rem;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      margin: 0.75rem 0;
+    }
+    .quickstart pre code { background: none; padding: 0; }
+
+    /* Category matrix */
+    .matrix { margin-bottom: 2rem; }
+    .matrix h2 { font-size: 1.25rem; margin-bottom: 1rem; }
+    .matrix table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    .matrix th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .matrix td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .matrix tr:hover td { background: var(--surface); }
+    .matrix .cat-name { font-weight: 600; }
+    .matrix .tag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .tag-attack { background: rgba(239,68,68,0.15); color: var(--red); }
+    .tag-defense { background: rgba(34,197,94,0.15); color: var(--green); }
+    .tag-walk { background: rgba(99,102,241,0.15); color: var(--accent); }
+    .tag-v2 { background: rgba(245,158,11,0.15); color: var(--orange); }
+
+    /* Sections */
+    section { margin-bottom: 2rem; }
+    section h2 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+    section p { color: var(--text-muted); margin-bottom: 0.5rem; }
+
+    /* Links */
+    .links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    .link-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--text-muted); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>OWASP <span>ASI</span> Reference</h1>
+  <p>The WebGoat for agentic AI security — runnable attack→defense demos for the OWASP Top 10 for Agentic Applications.</p>
+  <div class="badges">
+    <span class="badge">Python 3.12</span>
+    <span class="badge">Docker</span>
+    <span class="badge">FastMCP</span>
+    <span class="badge">MIT License</span>
+    <span class="badge">3 categories · 6 demos</span>
+  </div>
+</header>
+
+<div class="quickstart">
+  <h2>⚡ Quick Start</h2>
+  <pre><code>git clone https://github.com/aminrj/owasp-asi-reference
+cd owasp-asi-reference/ASI01_agent_goal_hijack/attack
+docker compose up --abort-on-container-exit
+# → [SUCCEEDED] Attack succeeded.</code></pre>
+  <p style="font-size:0.9rem;">Prerequisites: Docker + a local LLM with tool-calling (Ollama: <code>ollama serve</code> + <code>ollama pull qwen2.5:7b-instruct</code>). See the <a href="https://github.com/aminrj/owasp-asi-reference">full README</a> for details.</p>
+</div>
+
+<div class="matrix">
+  <h2>Demo Matrix</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Demo</th>
+        <th>What breaks</th>
+        <th>How it's fixed</th>
+        <th>Links</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cat-name">ASI01 — Agent Goal Hijack</td>
+        <td>Hidden instructions in a document hijack the agent</td>
+        <td>Strip injections + wrap untrusted content</td>
+        <td>
+          <a href="ASI01_agent_goal_hijack/attack/README.md" class="tag tag-attack">attack</a>
+          <a href="ASI01_agent_goal_hijack/defense/README.md" class="tag tag-defense">defense</a>
+          <a href="https://github.com/aminrj/owasp-asi-reference/blob/main/WALKTHROUGH.md" class="tag tag-walk">walkthrough</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="cat-name">ASI06 — Memory Poisoning</td>
+        <td>Poisoned memory from session 1 fires in session 2</td>
+        <td>Provenance tagging + trust-scoped recall</td>
+        <td>
+          <a href="ASI06_memory_poisoning/attack/README.md" class="tag tag-attack">attack</a>
+          <a href="ASI06_memory_poisoning/defense/README.md" class="tag tag-defense">defense</a>
+          <a href="https://github.com/aminrj/owasp-asi-reference/blob/main/WALKTHROUGH.md" class="tag tag-walk">walkthrough</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="cat-name">ASI02 — Tool Misuse</td>
+        <td>Agent misuses its tools to do unauthorized actions</td>
+        <td>Runtime policy enforcement at tool boundary</td>
+        <td>
+          <a href="ASI02_tool_misuse/attack/README.md" class="tag tag-attack">attack</a>
+          <a href="ASI02_tool_misuse/defense/README.md" class="tag tag-defense">defense</a>
+          <a href="https://github.com/aminrj/owasp-asi-reference/blob/main/WALKTHROUGH.md" class="tag tag-walk">walkthrough</a>
+        </td>
+      </tr>
+      <tr>
+        <td class="cat-name" style="color:var(--text-muted)">ASI03–ASI10</td>
+        <td colspan="3" style="color:var(--text-muted)"><span class="tag tag-v2">Coming in v2/v3</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<section>
+  <h2>Navigation</h2>
+  <div class="links">
+    <a href="https://github.com/aminrj/owasp-asi-reference" class="link-btn">📖 Full README</a>
+    <a href="https://github.com/aminrj/owasp-asi-reference/blob/main/WALKTHROUGH.md" class="link-btn">🚶 Walkthrough</a>
+    <a href="https://github.com/aminrj/owasp-asi-reference/blob/main/CONTRIBUTING.md" class="link-btn">🤝 Contribute</a>
+    <a href="https://github.com/aminrj/owasp-asi-reference/blob/main/SECURITY.md" class="link-btn">🔒 Security Policy</a>
+    <a href="https://github.com/aminrj/owasp-asi-reference/blob/main/CHANGELOG.md" class="link-btn">📝 Changelog</a>
+    <a href="https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/" class="link-btn">🏴 OWASP Agentic Top 10</a>
+  </div>
+</section>
+
+<section>
+  <h2>Why this exists</h2>
+  <p>The ecosystem has the taxonomy (OWASP list) and scanners (Promptfoo, Garak, PyRIT) but few minimal, <em>runnable</em> attack→defense pairs a practitioner can read in 15 minutes and run in 60 seconds. This fills that gap.</p>
+</section>
+
+<section>
+  <h2>Teaching with this repo</h2>
+  <p>Instructors: use this repo in your security training. Each category is self-contained and follows the same structure. See the <a href="teaching-guide.html">Teaching Guide</a> for tips on using these demos in the classroom.</p>
+</section>
+
+<footer>
+  <p>
+    <a href="https://github.com/aminrj/owasp-asi-reference">GitHub</a> ·
+    <a href="https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/">OWASP Agentic Top 10</a> ·
+    <a href="https://modelcontextprotocol.io/">Model Context Protocol</a>
+  </p>
+  <p style="margin-top:0.5rem;">MIT License · Copyright (c) 2026 Amine (aminrj)</p>
+</footer>
+
+</body>
+</html>

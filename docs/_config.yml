@@ -1,0 +1,4 @@
+# GitHub Pages — static site from docs/ folder
+# No Jekyll theme, no processing. Our HTML files are self-contained.
+title: OWASP ASI Reference
+description: The WebGoat for agentic AI security

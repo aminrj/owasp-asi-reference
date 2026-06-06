@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  compliance:
+    name: Compliance Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Dockerfiles use python:3.12-slim
+        run: |
+          echo "Checking Dockerfiles..."
+          while IFS= read -r f; do
+            if grep -q "FROM python:3.12-slim" "$f"; then
+              echo "  ✅ $f"
+            else
+              echo "  ❌ $f (not python:3.12-slim)"
+              exit 1
+            fi
+          done < <(find . -name Dockerfile -not -path "./.git/*")
+          echo "All Dockerfiles use python:3.12-slim."
+
+      - name: Check requirements.txt pins exact versions
+        run: |
+          echo "Checking requirements.txt files..."
+          while IFS= read -r f; do
+            count=$(grep -c "==" "$f")
+            lines=$(wc -l < "$f")
+            if [ "$count" -eq "$lines" ] && [ "$count" -gt 0 ]; then
+              echo "  ✅ $f ($count pinned deps)"
+            else
+              echo "  ❌ $f (not all deps pinned)"
+              exit 1
+            fi
+          done < <(find . -name requirements.txt -not -path "./.git/*")
+          echo "All requirements.txt files are fully pinned."
+
+      - name: Check docker-compose services
+        run: |
+          echo "Checking docker-compose.yml services..."
+          while IFS= read -r f; do
+            if grep -q "^  mcp:" "$f" && grep -q "^  agent:" "$f"; then
+              echo "  ✅ $f (mcp + agent)"
+            else
+              echo "  ❌ $f (missing mcp or agent service)"
+              exit 1
+            fi
+          done < <(find . -name docker-compose.yml -not -path "./.git/*")
+          echo "All docker-compose.yml files have mcp + agent services."
+
+      - name: Check Python banners
+        run: |
+          echo "Checking Python banners..."
+          while IFS= read -r f; do
+            if grep -qE "# >>> (VULNERABILITY|DEFENSE) \(" "$f"; then
+              echo "  ✅ $f"
+            else
+              echo "  ⚠️  $f (no banner found)"
+            fi
+          done < <(find . -name "*.py" -not -path "./.git/*" -not -path "./shared/*")
+
+  pages:
+    name: GitHub Pages Build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

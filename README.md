@@ -29,7 +29,7 @@ Three attack→defense pairs covering the main ways AI agents get compromised:
 ## Quick start (60 seconds)
 
 ```bash
-git clone https://github.com/aminrj-labs/owasp-asi-reference
+git clone https://github.com/aminrj/owasp-asi-reference
 cd owasp-asi-reference/ASI01_agent_goal_hijack/attack
 
 # Run the attack — it should succeed.
@@ -170,4 +170,4 @@ any of the code in this repository in production.**
 
 ## License
 
-[MIT](LICENSE) — Copyright (c) 2026 Amine (aminrj-labs)
+[MIT](LICENSE) — Copyright (c) 2026 Amine (aminrj)
