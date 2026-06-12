@@ -1,0 +1,4 @@
+{
+  "read_file": "Read a UTF-8 text file located under /data.",
+  "calculate": "Evaluate a simple arithmetic expression (e.g. '19 * 1271') and return the result."
+}

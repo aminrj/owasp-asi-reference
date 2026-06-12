@@ -53,7 +53,13 @@ test-attack-as02: ## Run ASI02 attack demo
 test-defense-as02: ## Run ASI02 defense demo
 	cd ASI02_tool_misuse/defense && docker compose up --abort-on-container-exit
 
-test-all: ## Run all six demos (attack + defense for each category)
+test-attack-as04: ## Run ASI04 attack demo
+	cd ASI04_supply_chain/attack && docker compose up --abort-on-container-exit
+
+test-defense-as04: ## Run ASI04 defense demo
+	cd ASI04_supply_chain/defense && docker compose up --abort-on-container-exit
+
+test-all: ## Run all demos (attack + defense for each category)
 	@echo "=== ASI01 Attack ==="
 	$(MAKE) test-attack-as01
 	@echo "=== ASI01 Defense ==="
@@ -66,6 +72,10 @@ test-all: ## Run all six demos (attack + defense for each category)
 	$(MAKE) test-attack-as02
 	@echo "=== ASI02 Defense ==="
 	$(MAKE) test-defense-as02
+	@echo "=== ASI04 Attack ==="
+	$(MAKE) test-attack-as04
+	@echo "=== ASI04 Defense ==="
+	$(MAKE) test-defense-as04
 
 # ── Build only (no run) ────────────────────────────────────────────────
 
@@ -87,10 +97,17 @@ build-attack-as02: ## Build ASI02 attack image
 build-defense-as02: ## Build ASI02 defense image
 	cd ASI02_tool_misuse/defense && docker compose build mcp agent
 
+build-attack-as04: ## Build ASI04 attack image
+	cd ASI04_supply_chain/attack && docker compose build mcp agent
+
+build-defense-as04: ## Build ASI04 defense image
+	cd ASI04_supply_chain/defense && docker compose build mcp agent
+
 build-all: ## Build all images
 	$(MAKE) build-attack-as01 build-defense-as01
 	$(MAKE) build-attack-as06 build-defense-as06
 	$(MAKE) build-attack-as02 build-defense-as02
+	$(MAKE) build-attack-as04 build-defense-as04
 
 # ── Cleanup ────────────────────────────────────────────────────────────
 
@@ -103,6 +120,8 @@ clean: ## Remove canary files, data directories, and stopped containers
 	rm -f ASI06_memory_poisoning/defense/data/*.canary
 	rm -f ASI02_tool_misuse/attack/data/*.canary
 	rm -f ASI02_tool_misuse/defense/data/*.canary
+	rm -f ASI04_supply_chain/attack/data/*.canary ASI04_supply_chain/attack/data/credentials.env
+	rm -f ASI04_supply_chain/defense/data/*.canary ASI04_supply_chain/defense/data/credentials.env
 	rm -f ASI06_memory_poisoning/attack/data/memory_store.json
 	rm -f ASI06_memory_poisoning/defense/data/memory_store.json
 	@echo "Removing stopped containers and volumes..."
@@ -112,6 +131,8 @@ clean: ## Remove canary files, data directories, and stopped containers
 	docker compose -f ASI06_memory_poisoning/defense/docker-compose.yml down --remove-orphans 2>/dev/null || true
 	docker compose -f ASI02_tool_misuse/attack/docker-compose.yml down --remove-orphans 2>/dev/null || true
 	docker compose -f ASI02_tool_misuse/defense/docker-compose.yml down --remove-orphans 2>/dev/null || true
+	docker compose -f ASI04_supply_chain/attack/docker-compose.yml down --remove-orphans 2>/dev/null || true
+	docker compose -f ASI04_supply_chain/defense/docker-compose.yml down --remove-orphans 2>/dev/null || true
 	@echo "Done."
 
 # ── Compliance checks ──────────────────────────────────────────────────

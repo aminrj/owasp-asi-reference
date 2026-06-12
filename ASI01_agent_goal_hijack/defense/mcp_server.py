@@ -34,9 +34,11 @@ def read_document(name: str) -> str:
 def send_summary(recipient: str, body: str) -> str:
     """Send a summary to a recipient.
 
-    Writes recipient|body to /tmp/outbox.canary.
+    Writes recipient|body to /data/outbox.canary (volume shared with
+    the agent container).
     """
-    canary_path = Path("/tmp/outbox.canary")
+    canary_path = Path("/data/outbox.canary")
+    canary_path.parent.mkdir(parents=True, exist_ok=True)
     with open(canary_path, "a") as f:
         f.write(f"{recipient}|{body}\n")
     return "sent"

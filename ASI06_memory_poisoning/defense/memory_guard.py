@@ -19,6 +19,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from shared.console import note_blocked
+
 
 class MemorySource(str, Enum):
     """Where this memory entry originated."""
@@ -88,17 +90,14 @@ def guard_write(
     # High-impact keys require USER_EXPLICIT provenance + confirmation.
     if key in SENSITIVE_KEYS:
         if source != MemorySource.USER_EXPLICIT:
-            print(
-                f"[memory_guard] WRITE BLOCKED: key={key!r} "
-                f"source={source.value!r} (high-impact key requires user_explicit)",
-                flush=True,
+            note_blocked(
+                f"memory write blocked: key={key!r} source={source.value!r} "
+                f"(high-impact key requires user_explicit)"
             )
             return None
         if not interactive_confirm:
-            print(
-                f"[memory_guard] WRITE BLOCKED: key={key!r} "
-                f"requires interactive confirmation",
-                flush=True,
+            note_blocked(
+                f"memory write blocked: key={key!r} requires interactive confirmation"
             )
             return None
 
@@ -141,10 +140,9 @@ def guard_recall(
             executable.append(record)
         else:
             advisory.append(record)
-            print(
-                f"[memory_guard] QUARANTINED: key={key or '?'} "
-                f"trust={record.trust.value} (below threshold {TRUST_THRESHOLD.value})",
-                flush=True,
+            note_blocked(
+                f"memory recall quarantined: key={key or '?'} "
+                f"trust={record.trust.value} (below threshold {TRUST_THRESHOLD.value})"
             )
 
     return executable, advisory

@@ -11,6 +11,8 @@ services:
       dockerfile: ASI01_agent_goal_hijack/attack/Dockerfile
     command: python mcp_server.py
     environment: *llm-env
+    volumes:
+      - ./data:/data
     healthcheck:
       test: ["CMD", "python", "-c", "import socket;socket.create_connection(('localhost',8000),2)"]
       interval: 2s
@@ -28,5 +30,7 @@ services:
     environment:
       MCP_URL: http://mcp:8000/mcp
       <<: *llm-env
+    volumes:
+      - ./data:/data
     extra_hosts:
       - "host.docker.internal:host-gateway"

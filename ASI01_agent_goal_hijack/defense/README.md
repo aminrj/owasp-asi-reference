@@ -32,7 +32,7 @@ injection is stripped. The console prints:
 ## Verify
 
 ```bash
-cat /tmp/outbox.canary
+cat data/outbox.canary
 ```
 
 The canary will be empty or contain only `owner@example.com` — no

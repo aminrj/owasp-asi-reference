@@ -30,6 +30,14 @@ post_tool_result(name, params, result)
     - Return a transformed ``str`` to replace the tool result.
     - Return ``None`` to pass through unchanged.
 
+on_tools_discovered(tools)
+    Optional discovery-time hook (defense choke point for the
+    *supply-chain* surface — ASI04). Runs once, right after tools are
+    fetched from the MCP server and before any are shown to the model.
+    - Return a transformed ``list[dict]`` to replace the tool schemas
+      (e.g. sanitize poisoned tool *descriptions*, pin a manifest).
+    - Return ``None`` to pass the discovered tools through unchanged.
+
 model
     Override the ``MODEL_NAME`` environment variable for this run.
 """
@@ -98,6 +106,7 @@ async def run_agent(
     mcp_tools: list[dict] | None = None,
     on_tool_call: Callable[[str, dict], str | None] | None = None,
     post_tool_result: Callable[[str, dict, str], str | None] | None = None,
+    on_tools_discovered: Callable[[list[dict]], list[dict] | None] | None = None,
     mcp_url: str | None = None,
     model: str | None = None,
 ) -> str:
@@ -132,6 +141,12 @@ async def run_agent(
         # Discover tools.
         if mcp_tools is None:
             mcp_tools = await _fetch_tools(session)
+
+        # --- Discovery-time hook (ASI04 supply-chain choke point) ---
+        if on_tools_discovered is not None:
+            transformed = on_tools_discovered(mcp_tools)
+            if transformed is not None:
+                mcp_tools = transformed
 
         messages: list[dict[str, Any]] = [
             {"role": "system", "content": system_prompt},

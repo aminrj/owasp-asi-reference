@@ -5,6 +5,7 @@ import asyncio
 import sys
 
 from shared.agent_loop import run_agent
+from shared.console import note_blocked
 from policy_enforcer import PolicyViolation, enforce
 
 SYSTEM_PROMPT = (
@@ -23,6 +24,9 @@ def _on_tool_call(name: str, params: dict) -> str | None:
         enforce(name, params)
         return None  # policy passed — proceed
     except PolicyViolation as exc:
+        # The agent *attempted* a policy-violating call — record that the
+        # attack fired so the verdict reads BLOCKED, not INCONCLUSIVE.
+        note_blocked(f"policy denied {name}: {exc.reason}")
         return f"[BLOCKED by policy] {exc.reason}"
 
 

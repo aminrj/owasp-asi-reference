@@ -1,3 +1,6 @@
+# Build context is the repo root (../..) so the image can COPY both
+# shared/ and ASI04_supply_chain/attack/. The command then runs from /app
+# where mcp_server.py / attacker.py live.
 x-llm-env: &llm-env
   - OPENAI_BASE_URL=${OPENAI_BASE_URL:-http://host.docker.internal:11434/v1}
   - OPENAI_API_KEY=${OPENAI_API_KEY:-not-needed}
@@ -7,12 +10,10 @@ x-llm-env: &llm-env
 services:
   mcp:
     build:
-      context: ../../..
-      dockerfile: ASI01_agent_goal_hijack/defense/Dockerfile
+      context: ../..
+      dockerfile: ASI04_supply_chain/attack/Dockerfile
     command: python mcp_server.py
-    environment:
-      BLOCK_CANARY_PATH: /data/blocked.canary
-      <<: *llm-env
+    environment: *llm-env
     volumes:
       - ./data:/data
     healthcheck:
@@ -23,15 +24,14 @@ services:
 
   agent:
     build:
-      context: ../../..
-      dockerfile: ASI01_agent_goal_hijack/defense/Dockerfile
+      context: ../..
+      dockerfile: ASI04_supply_chain/attack/Dockerfile
     command: python attacker.py
     depends_on:
       mcp:
         condition: service_healthy
     environment:
       MCP_URL: http://mcp:8000/mcp
-      BLOCK_CANARY_PATH: /data/blocked.canary
       <<: *llm-env
     volumes:
       - ./data:/data

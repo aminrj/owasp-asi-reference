@@ -12,6 +12,7 @@ services:
     command: python mcp_server.py
     environment:
       SESSION_CUSTOMER_ID: C-1001
+      BLOCK_CANARY_PATH: /data/blocked.canary
       <<: *llm-env
     volumes:
       - ./data:/data
@@ -32,6 +33,7 @@ services:
     environment:
       MCP_URL: http://mcp:8000/mcp
       SESSION_CUSTOMER_ID: C-1001
+      BLOCK_CANARY_PATH: /data/blocked.canary
       <<: *llm-env
     volumes:
       - ./data:/data

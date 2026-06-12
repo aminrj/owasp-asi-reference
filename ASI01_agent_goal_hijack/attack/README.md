@@ -22,7 +22,7 @@ The agent fetches the document, reads the poisoned content, and calls
 ## Verify
 
 ```bash
-cat /tmp/outbox.canary
+cat data/outbox.canary
 ```
 
 The canary will contain a line with `attacker@evil.example` — proving
