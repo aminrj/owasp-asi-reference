@@ -1,13 +1,13 @@
 x-llm-env: &llm-env
-  - OPENAI_BASE_URL=${OPENAI_BASE_URL:-http://host.docker.internal:11434/v1}
-  - OPENAI_API_KEY=${OPENAI_API_KEY:-not-needed}
-  - MODEL_NAME=${MODEL_NAME:-qwen2.5:7b-instruct}
-  - PYTHONUNBUFFERED=1
+  OPENAI_BASE_URL: ${OPENAI_BASE_URL:-http://host.docker.internal:11434/v1}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-not-needed}
+  MODEL_NAME: ${MODEL_NAME:-qwen2.5:7b-instruct}
+  PYTHONUNBUFFERED: 1
 
 services:
   mcp:
     build:
-      context: ../../..
+      context: ../..
       dockerfile: ASI06_memory_poisoning/defense/Dockerfile
     command: python mcp_server.py
     environment:
@@ -23,7 +23,7 @@ services:
 
   agent:
     build:
-      context: ../../..
+      context: ../..
       dockerfile: ASI06_memory_poisoning/defense/Dockerfile
     command: python attacker.py
     depends_on:
